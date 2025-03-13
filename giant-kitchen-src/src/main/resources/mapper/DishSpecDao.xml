@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.giant.kitchen.infra.mapper.DishSpecDao">
+
+    <resultMap type="com.giant.kitchen.infra.entity.DishSpec" id="DishSpecMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="dishId" column="dish_id" jdbcType="INTEGER"/>
+        <result property="specName" column="spec_name" jdbcType="VARCHAR"/>
+        <result property="specOptions" column="spec_options" jdbcType="VARCHAR"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
+        <result property="updatedBy" column="updated_by" jdbcType="VARCHAR"/>
+        <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DishSpecMap">
+        select id,
+               dish_id,
+               spec_name,
+               spec_options,
+               created_by,
+               created_time,
+               updated_by,
+               updated_time
+        from dish_spec
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="DishSpecMap">
+        select
+        id, dish_id, spec_name, spec_options, created_by, created_time, updated_by, updated_time
+        from dish_spec
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="dishId != null">
+                and dish_id = #{dishId}
+            </if>
+            <if test="specName != null and specName != ''">
+                and spec_name = #{specName}
+            </if>
+            <if test="specOptions != null and specOptions != ''">
+                and spec_options = #{specOptions}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="createdTime != null">
+                and created_time = #{createdTime}
+            </if>
+            <if test="updatedBy != null and updatedBy != ''">
+                and updated_by = #{updatedBy}
+            </if>
+            <if test="updatedTime != null">
+                and updated_time = #{updatedTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from dish_spec
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="dishId != null">
+                and dish_id = #{dishId}
+            </if>
+            <if test="specName != null and specName != ''">
+                and spec_name = #{specName}
+            </if>
+            <if test="specOptions != null and specOptions != ''">
+                and spec_options = #{specOptions}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="createdTime != null">
+                and created_time = #{createdTime}
+            </if>
+            <if test="updatedBy != null and updatedBy != ''">
+                and updated_by = #{updatedBy}
+            </if>
+            <if test="updatedTime != null">
+                and updated_time = #{updatedTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into dish_spec(dish_id, spec_name, spec_options, created_by, created_time, updated_by, updated_time)
+        values (#{dishId}, #{specName}, #{specOptions}, #{createdBy}, #{createdTime}, #{updatedBy}, #{updatedTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into dish_spec(dish_id, spec_name, spec_options, created_by, created_time, updated_by, updated_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.dishId}, #{entity.specName}, #{entity.specOptions}, #{entity.createdBy}, #{entity.createdTime},
+            #{entity.updatedBy}, #{entity.updatedTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into dish_spec(dish_id, spec_name, spec_options, created_by, created_time, updated_by, updated_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.dishId}, #{entity.specName}, #{entity.specOptions}, #{entity.createdBy}, #{entity.createdTime},
+            #{entity.updatedBy}, #{entity.updatedTime})
+        </foreach>
+        on duplicate key update
+        dish_id = values(dish_id),
+        spec_name = values(spec_name),
+        spec_options = values(spec_options),
+        created_by = values(created_by),
+        created_time = values(created_time),
+        updated_by = values(updated_by),
+        updated_time = values(updated_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update dish_spec
+        <set>
+            <if test="dishId != null">
+                dish_id = #{dishId},
+            </if>
+            <if test="specName != null and specName != ''">
+                spec_name = #{specName},
+            </if>
+            <if test="specOptions != null and specOptions != ''">
+                spec_options = #{specOptions},
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                created_by = #{createdBy},
+            </if>
+            <if test="createdTime != null">
+                created_time = #{createdTime},
+            </if>
+            <if test="updatedBy != null and updatedBy != ''">
+                updated_by = #{updatedBy},
+            </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from dish_spec
+        where id = #{id}
+    </delete>
+
+</mapper>
+
